@@ -1,4 +1,4 @@
-DJANGO
+DJANGO - CURSO ITBA FSD 2022
 
 1) CREAR PROYECTO
 - Abrir CMD como admin, y con el comando workon seleccionar el venv de django

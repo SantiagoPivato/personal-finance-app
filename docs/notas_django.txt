@@ -1,0 +1,143 @@
+DJANGO
+
+1) CREAR PROYECTO
+- Abrir CMD como admin, y con el comando workon seleccionar el venv de django
+- Poscicionarse (en cmd admin) en el directorio donde va a estar el proyecto
+- Ejecutar django-admin startproject nombreProyecto para crear proyecto
+- Para trabajar desde la consola de VSC: Ctrl + K + O, abrir proyecto, cambiar la "versión" de py al venv, abrir terminal
+- Ejecutar py manage.py migrate para migrar las aplicaciones integradas de django
+- Ejecutar py manage.py runserver para iniciar el servidor, verificar que funcione http://127.0.0.1:8000/
+
+2) CREAR APLICACIÓN
+- Ejecutar py manage.py startapp nombreApp para crear la aplicación
+- En el archivo settings.py del proyecto, agregar la string 'nombreApp' al array INSTALLED_APPS
+
+3) CREAR VISTA
+- En el archvio views.py de alguna app, definir una función con el nombre de la vista:
+	ej: def nombreVista(request):
+- Importar el módulo HttpResponse de django.shortcuts en views.py
+- A la función definida, agregarle un return HttpResponse(*)
+- *: Adentro de los paréntesis va el código html (en forma de string) de la vista
+
+4) LINKEAR URL DE UNA VISTA
+- Verificar en settings.py que ROOT_URLCONF tenga asignado como valor el archivo donde está la variable urlpatterns
+- En el archivo urls.py del proyecto agregar from nombreApp import views
+- En el mismo archivo agregar al array urlpatters la función path(*)
+- *: Parámetros -> route - String con la url desde la que se accede a la vista, ej. "" (default), "index/", "home/profile"
+		-> view - Ubicación de la función de la vista en el proyecto, ej. views.index (el views sale del import)
+		-> name - Nombre con el que se puede hacer referencia a la vista dentro del proyecto de django, ej. name="index"
+
+
+5) CREAR TEMPLATE
+- Crear dentro de la app la carpeta templates
+- Dentro de templates una carpeta con el nombre de la app
+- Dentro de esta carpeta crear el template como un archivo nombreTemplate.html
+- El template se puede llamar en otros templates o se puede linkear a una vista
+- Linkear a Vista: Importar render: from django.shortcuts import render
+- Linkear a Vista: Crear o modificar el return de una vista, para que devuelva un render(request,"nombreApp/nombreTemplate.html")
+
+6) HEREDAR TEMPLATE
+- Crear un template que contenga block tags* para usar como base o template padre
+. *: Block Tags: {% block nombreBloque%} {%endblock%}
+- Crear un template que contega el tag extends: {% extends "nombreApp/nombreTemplateBase.html"%}
+- Luego agregarle los block tags de la clase padre, pero con html adentro
+- Django va a renderizar la template base con el código html de los block tags de la vista hija
+
+7) AGREGAR RECURSOS ESTÁTICOS (js, css, img) Y LINKS A VISTA
+- Crear una carpeta static dentro de la app
+- Dentro de static crear ua carpeta con el nombre de la app
+- Agregar a la vista el tag load {%load static%}
+- Dentro de los href, src, etc., linkear mediante el path los arhvivos de static:
+	ej.: <link href="{%static 'app/css/estilos.css'%}" rel="stylesheet">
+- Para los links basta con usar el tag url: <a href="{%url 'home'%}"></a>
+
+8) CREAR MODEL
+- Importar models en el archivo models.py de la app: from django.db import models
+- Crear la clase: class NombreClase(models.Model):
+- Agregar atributos con sus respectivos tipos. ej.; title = models.CharField(max_length=40), num = models.IntgerField()
+- Ejecutar py manage.py makemigrations nombreApp y py manage.py migrate nombreApp, para aplicar los cambios en la BBDD
+- En nombreApp/admin.py importar el mmodel: from .models import (nombreModel)
+- Registrar el modelo: admin.site.register(nombreModel)
+
+9) CREAR USUARIO ADMIN
+- Ejecutar python manage.py createsuperuser
+- Ingresar datos
+- Ir a http://127.0.0.1:8000/admin y logearse
+	Proyecto
+- user: admin 
+- contra: admin
+
+10) EMPROLIJAR ADMIN ?
+- En nombreApp/apps.py, en la clase nombreAppConfig agregar el campo verbose_name = 'nombreAppProlijo'
+- En settings.py, cabmiar 'nombreApp' por 'nombreApp.apps.nombreAppConfig' en INSTALLED_APPS
+
+11) EMPROLIJAR MODEL ? 
+- Crear en la clase del model la subclase Meta: class Meta:
+- Agregar los campos verbose_name, verbose_name_plural y ordering
+- Agregar a cada columna de la tabla, el parámetro verbose_name="nombreColumnaProlijo"
+- Agregar el método __str__(self): return (lo que se quiera devolver)
+
+
+11.5) MOSTRAR CAMPOS DE SOLO LECTURA EN ADMIN ?
+- En admin.py de la app importar el model: from .models import nombreModel
+- Crear la clase nombreModelAdmin(admin.ModelAdmin)
+- Agregar el atributo readonly_field = ('nombreCampo1','nombreCampo2', ... ,'nombreCampoN')
+- Añadir al final de admin.py: admin.site.register(nombreModel, nombreModelAdmin)
+
+12) SUBIR ARCHIVOS COMO COLUMNA DE TABLA ???
+- CASO IMG: ejecutar python -m pip install Pillow en el venv, crear columnas como -> models.ImageField()
+- Crear la carpeta media en el root del proyecto
+- Añadir en settings.py MEDIA_URL = '/media/' y MEDIA_ROOT = os.path.join(BASE_DIR,"media")
+- En urls.py del proyecto importar: from django.conf import settings
+- Agregar-> if settings.DEBUG:
+		from django.conf.urls.static import static
+		urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+13) LLAMAR MODEL DESDE VISTA
+- En el archivo views.py de la app, importar el modelo: from .models import nombreModel
+- Dentro de la vista, almacenar en una variable registros de la tabla del mode. ej.: registros = nombreModel.objects.all()
+- Pasar como parámetro en el render del return, el diccionario {'registros': registros}
+- Para iterar sobre los registros en el template, usar {%for registro in registros%}, luego <h1>{{registro.title}}</h1> {%endfor%}
+
+14) CREAR FORMULARIO 
+- Crear en la app un archivo forms.py
+- Importar forms: from django import forms
+- Crear la clase nombreModelForm(forms.Form), y agregar atributos. ej.: name = forms.CharField()
+- Importar en views.py el form: fro, .forms import nombreModelForm
+- Crear en la función de la vista donde va a estar el form, la variable form= nombreModelForm
+- Agregar al render del return el diccionario {'form': form} como parámetro 
+- Crear en el template al que se hacer render, una etiqueta form y adentro el tag {{form.as_p}} para generar el form como párrafo
+- Agregar un input type="submit" dentro del form
+- Agregar dentro del form el tag {%csrf_token%} por seguridad
+- En la función de la vista, validar la request: if request.method = "POST"/"GET":
+- Crear el form como: form = nombreForm(request.POST) y validar con if form.is_valid():
+- Almacenar los valores de la request. ej.; name = request.POST.get('name','')
+- Redirigir de vuelta a la página: return redirect(reverse('nombreVista')+"?param1+?param2+...+?paramN")
+
+14.5) CREAR FORMULARIO PARA UN MODEL
+- En forms.py, importar ModelForm: from django.forms import ModelForm
+- Crear la clase nombreModelForm(ModelForm)
+- Agregarle adentro la clase Meta: Class Meta:, y agregarle los atributos model = nombre Model, y fields = ['campo1',...'campoN']
+- En views.py imporar la clase: from .forms import nombreModelForm
+- Instanciarlo como: form = nombreModelForm() y pasarlo como parámetro en el diccionario de context a la función render
+- Crear un <form></form> en la plantilla con método post y agregarle {%csfr token%}, {{form.as_p}}, y un <input type="submit">
+- Para recibir el form, en la view validar if request.method=='POST'y crear form = nombreModelForm(request.POST)
+- Finalmente validar if form.is_valid():, guadar en la bd con form.save()
+
+15) LOG IN
+- Crear usuario desde admin
+- Agregar a urlpatterns del urls.py del proyecto, el path: path('cuentas/',include('django.contrib.auth.urls'))
+- Crear la app registration: py manage.py startapp registration
+- Agregar la app a INSTALLED_APPS de settings.py: "registration"
+- Crear en registrations la carpeta templates, dentro de templates la carpeta registration, y dentro de registration el archivo login.html
+- Crear en el index un form action="post", con un input type="text" name="username", un <input type="password" name="password", y un submit 
+- Agregar en settigs.py, la constante LOGIN_REDIRECT_URL = '/urlPaginaInicio'
+- También agregar la constante LOGOUT_REDIRECT_URL = '/urlPagina' para el cierre de sesión
+- Para obtener el nomrbe usuario en las views, usar request.user
+
+
+
+16)Shell
+- python3 manage.py shell
+
+

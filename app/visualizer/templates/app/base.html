@@ -1,0 +1,42 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        {% block title %}
+            Finance App
+        {% endblock %}
+    </title>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'app/img/favicon.ico' %}">
+        
+    <!-- COMMON STYLES -->
+    <link href="{% static 'app/plugins/bootstrap-5.3.3-dist/css/bootstrap.css' %}" rel="stylesheet">
+    <!-- CUSTOM STYLES-->
+    {% block custom_styles %} {% endblock %}
+</head>
+<body>
+
+
+    <div id="main-conent" class="container-fluid p-3">
+        {% block main_content %}
+            Finance App
+        {% endblock %}
+    </div>
+    
+
+
+    <!-- COMMON SCRIPTS -->
+    <script src="{%static 'app/plugins/bootstrap-5.3.3-dist/js/bootstrap.bundle.js'%}"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js "></script>
+    <!-- CUSTOM SCRIPTS-->
+    <script src="{% static 'app/js/common.js'%}"></script>
+
+    {% block custom_scripts %} {% endblock %}
+
+</body>
+</html>

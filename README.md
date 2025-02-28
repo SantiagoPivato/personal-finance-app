@@ -1,7 +1,7 @@
 # Personal finance project
 
 ## Objectives
-- Create a dashboard to visualize market realted data and use this informatio to make savings/investments decisions. 
+- Create a dashboard to visualize market realted data and use this information to make savings/investment decisions. 
 - Fetch relevant data from financial APIs like BCRA's or IOL's, and learn how to interpret this information.
 - Learn financial vocabulary and strategies. 
 

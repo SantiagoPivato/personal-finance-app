@@ -7,13 +7,13 @@ from datetime import datetime
 
 # Create your views here.
 
-#Vista principal
+#Main view
 def index(request):
-    variables_bcra = list(Variable.objects.all())
+    variables_bcra = list(get_variables_bcra())
     return render(request, "app/index.html", {"variables_bcra": variables_bcra})
 
 
-#Obtiene y almacena las variables del BCRA en la tabla de Variables
+#Fetches and stores BCRA variables into table Variables
 def get_variables_bcra():
     #Api call
     api = ApiEstadisticasCambiariasBCRA()
@@ -56,7 +56,7 @@ def get_variables_bcra():
 
 
 
-#Obtiene y almacena las variables del BCRA en la tabla de Variables
+#Fetches and stores data from a BCRA variable into table VariableValues
 def get_variable_values_bcra(request, variable):
     #input
     today = datetime.today().strftime('%Y-%m-%d')

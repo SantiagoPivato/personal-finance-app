@@ -1,0 +1,27 @@
+[
+    {
+        "model": "visualizer.unit",
+        "fields": {
+            "name": "Argentinian Peso",
+            "code": "ARS",
+            "symbol": "$"
+        }
+    },
+
+    {
+        "model": "visualizer.unit",
+        "fields": {
+            "name": "Percentage",
+            "code": "%",
+            "symbol": "%"
+        }
+    },
+    {
+        "model": "visualizer.unit",
+        "fields": {
+            "name": "USA Dollar",
+            "code": "USD",
+            "symbol": "$"
+        }
+    }
+]
